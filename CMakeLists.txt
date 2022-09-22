@@ -18,6 +18,7 @@ target_sources(sires PRIVATE
   $<$<PLATFORM_ID:Darwin>:apple.mm>
   $<$<PLATFORM_ID:iOS>:apple.mm>
   $<$<PLATFORM_ID:Windows>:windows.cpp>)
+target_sources(sires INTERFACE FILE_SET HEADERS FILES sires.hpp)
 
 add_executable(sires-poc MACOSX_BUNDLE poc.txt)
 target_link_libraries(sires-poc PUBLIC sires)
