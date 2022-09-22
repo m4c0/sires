@@ -10,6 +10,7 @@ target_compile_options(sires PUBLIC
   $<$<PLATFORM_ID:Darwin>:-fobjc-arc>
   $<$<PLATFORM_ID:iOS>:-fobjc-arc>)
 target_link_libraries(sires PUBLIC
+  "$<$<PLATFORM_ID:Darwin>:-framework Foundation>"
   "$<$<PLATFORM_ID:iOS>:-framework Foundation>")
 target_link_options(sires PUBLIC
   $<$<PLATFORM_ID:iOS>:-ObjC>)
@@ -18,6 +19,7 @@ target_sources(sires PRIVATE
   $<$<PLATFORM_ID:iOS>:apple.mm>
   $<$<PLATFORM_ID:Windows>:windows.cpp>)
 
-add_executable(sires-poc MACOSX_BUNDLE)
+add_executable(sires-poc MACOSX_BUNDLE poc.txt)
 target_link_libraries(sires-poc PUBLIC sires)
 target_sources(sires-poc PRIVATE poc.cpp)
+set_target_properties(sires-poc PROPERTIES RESOURCE poc.txt)
