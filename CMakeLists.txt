@@ -17,7 +17,8 @@ target_link_options(sires PUBLIC
 target_sources(sires PRIVATE
   $<$<PLATFORM_ID:Darwin>:apple.mm>
   $<$<PLATFORM_ID:iOS>:apple.mm>
-  $<$<PLATFORM_ID:Windows>:windows.cpp>)
+  $<$<PLATFORM_ID:Windows>:windows.cpp>
+  $<$<STREQUAL:${CMAKE_SYSTEM_NAME},WASI>:wasm.cpp>)
 target_sources(sires INTERFACE FILE_SET HEADERS FILES sires.hpp)
 
 add_executable(sires-poc MACOSX_BUNDLE poc.txt)
