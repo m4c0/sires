@@ -27,13 +27,6 @@
         for (var i = 0; i < ptr_len; i++) arr[i] = fname.charCodeAt(i);
         return wasi_esuccess;
       }
-      function path_open(fd, dir_flags, path, path_len, oflags, fs_r_base, fs_r_inh, fdflags, ptr) {
-        if (fd >= filenames.length) return wasi_ebadf;
-
-        var arr = new Uint32Array(mem_buf, ptr, 4);
-        arr[0] = fd;
-        return wasi_esuccess;
-      }
       function fd_read(fd, iovs, iovs_len, nr) {
         var arr = new Uint32Array(mem_buf, nr, 4);
         arr[0] = 0;
@@ -58,7 +51,6 @@
             fd_prestat_get,
             fd_read,
             fd_seek,
-            path_open,
           }
         }).then(obj => {
           mem_buf = obj.exports.memory.buffer;
