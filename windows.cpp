@@ -1,9 +1,11 @@
-#include "sires.hpp"
+module;
 
 #include <filesystem>
 #include <fstream>
 #include <tchar.h>
 #include <windows.h>
+
+module sires;
 
 inline auto exe_path() noexcept {
   TCHAR exepath[MAX_PATH + 1];

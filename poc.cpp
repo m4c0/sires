@@ -1,4 +1,4 @@
-#include "sires.hpp"
+import sires;
 
 #include <iostream>
 
