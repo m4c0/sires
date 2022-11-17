@@ -1,6 +1,6 @@
 #include <fstream>
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 extern "C" std::streambuf * sires_open(const char * name, const char * ext) {
   NSString * name_str = [NSString stringWithUTF8String:name];
