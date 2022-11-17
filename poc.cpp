@@ -9,5 +9,8 @@ int main() {
     return 1;
   }
 
-  std::cout << "OK\n";
+  std::istream in { buf.get() };
+  std::string line;
+  in >> line;
+  std::cout << "Got this from resource: " << line << std::endl;
 }
