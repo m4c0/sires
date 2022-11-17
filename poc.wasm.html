@@ -7,7 +7,7 @@
       const wasi_ebadf = 8;
       const wasi_einval = 28;
 
-      const filenames = [ null, null, null, "one", "poc.txt", "quatro", "hachi" ];
+      var filenames = [ null, null, null ];
 
       var mem_buf;
 
@@ -43,8 +43,15 @@
         return wasi_esuccess;
       }
 
-      (function() {
-        ecow({
+      function sires_preopen(name) {
+        return fetch(name)
+          .then(response => response.arrayBuffer())
+          .then(bytes => wad = new Uint8Array(bytes))
+          .then(_ => filenames.push(name));
+      }
+
+      function ecow_poc() {
+        return ecow({
           base_dir: "out/wasm",
           extra_syscalls: {
             fd_prestat_dir_name,
@@ -57,6 +64,10 @@
           mem_buf = obj.exports.memory.buffer;
           obj.start();
         });
+      }
+
+      (function() {
+        sires_preopen("poc.txt").then(_ => ecow_poc());
       })();
     </script>
   </body>
