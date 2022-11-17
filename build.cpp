@@ -9,7 +9,7 @@ int main(int argc, char ** argv) {
 
   auto & m_steve = m->for_feature(objective_c);
   m_steve.add_impl("apple");
-  m_steve.add_unit<objc>("apple.mm")->add_framework("Foundation");
+  m_steve.add_unit<objc>("apple.mm");
 
   m->for_feature(webassembly).add_impl("wasm");
   m->for_feature(windows_api).add_impl("windows");
@@ -17,7 +17,7 @@ int main(int argc, char ** argv) {
   auto poc = all.add_unit<app>("sires-poc");
   poc->add_ref(m);
   poc->add_unit<>("poc");
-  // TODO: add poc.txt as a resource
+  poc->add_resource("poc.txt");
 
   return run_main(all, argc, argv);
 }
