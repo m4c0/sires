@@ -11,7 +11,10 @@ int main(int argc, char ** argv) {
   m_steve.add_impl("apple");
   m_steve.add_unit<objc>("apple.mm");
 
-  m->for_feature(webassembly).add_impl("wasm");
+  auto & wasm = m->for_feature(webassembly);
+  wasm.add_impl("wasm");
+  wasm.add_unit<>("wasm.syscalls.cpp");
+
   m->for_feature(windows_api).add_impl("windows");
 
   auto poc = all.add_unit<app>("sires-poc");
