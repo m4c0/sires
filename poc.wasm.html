@@ -1,0 +1,63 @@
+<html>
+  <head><title>sires Proof-of-Concept</title></head>
+  <body>
+    <script type="text/javascript" src="out/wasm/sires-poc.js"></script>
+    <script type="text/javascript">
+      const wasi_esuccess = 0;
+      const wasi_ebadf = 8;
+      const wasi_einval = 28;
+
+      const filenames = [ null, null, null, "one", "poc.txt", "quatro", "hachi" ];
+
+      var mem_buf;
+
+      function fd_prestat_get(fd, ptr) {
+        if (fd >= filenames.length) return wasi_ebadf;
+
+        var arr = new Uint32Array(mem_buf, ptr, 4);
+        arr[0] = 0;
+        arr[1] = filenames[fd].length;
+        return wasi_esuccess;
+      }
+      function fd_prestat_dir_name(fd, ptr, ptr_len) {
+        if (fd >= filenames.length) return wasi_ebadf;
+
+        const fname = filenames[fd];
+        const arr = new Uint8Array(mem_buf, ptr, ptr_len);
+        for (var i = 0; i < ptr_len; i++) arr[i] = fname.charCodeAt(i);
+        return wasi_esuccess;
+      }
+      function path_open(fd, dir_flags, path, path_len, oflags, fs_r_base, fs_r_inh, fdflags, ptr) {
+        if (fd >= filenames.length) return wasi_ebadf;
+
+        var arr = new Uint32Array(mem_buf, ptr, 4);
+        arr[0] = fd;
+        return wasi_esuccess;
+      }
+      function fd_read(fd, iovs, iovs_len, nr) {
+        var arr = new Uint32Array(mem_buf, nr, 4);
+        arr[0] = 0;
+        return wasi_esuccess;
+      }
+      function fd_seek(fd, offs, whence, ptr) {
+        return wasi_esuccess;
+      }
+
+      (function() {
+        ecow({
+          base_dir: "out/wasm",
+          extra_syscalls: {
+            fd_prestat_dir_name,
+            fd_prestat_get,
+            fd_read,
+            fd_seek,
+            path_open,
+          }
+        }).then(obj => {
+          mem_buf = obj.exports.memory.buffer;
+          obj.start();
+        });
+      })();
+    </script>
+  </body>
+</html>
