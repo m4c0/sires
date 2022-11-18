@@ -2,8 +2,12 @@ import sires;
 
 #include <iostream>
 
-int main() {
-  std::unique_ptr<std::streambuf> buf { sires::open("poc", "txt") };
+extern "C" std::streambuf * poc_open() {
+  return sires::open("poc", "txt");
+}
+
+extern "C" int poc_peek(std::streambuf * ptr) {
+  std::unique_ptr<std::streambuf> buf { ptr };
   if (!buf) {
     std::cout << "Failed to read test file\n";
     return 1;
@@ -13,4 +17,9 @@ int main() {
   std::string line;
   in >> line;
   std::cout << "Got this from resource: " << line << std::endl;
+  return 0;
+}
+
+int main() {
+  return poc_peek(poc_open());
 }
