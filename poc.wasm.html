@@ -3,63 +3,16 @@
   <body>
     <script type="text/javascript" src="out/wasm/sires-poc.js"></script>
     <script type="text/javascript">
-      const wasi_esuccess = 0;
-      const wasi_ebadf = 8;
-      const wasi_einval = 28;
-
-      var filenames = [ null, null, null ];
-
-      var mem_buf;
-
-      function fd_prestat_get(fd, ptr) {
-        if (fd >= filenames.length) return wasi_ebadf;
-
-        var arr = new Uint32Array(mem_buf, ptr, 4);
-        arr[0] = 0;
-        arr[1] = filenames[fd].length;
-        return wasi_esuccess;
-      }
-      function fd_prestat_dir_name(fd, ptr, ptr_len) {
-        if (fd >= filenames.length) return wasi_ebadf;
-
-        const fname = filenames[fd];
-        const arr = new Uint8Array(mem_buf, ptr, ptr_len);
-        for (var i = 0; i < ptr_len; i++) arr[i] = fname.charCodeAt(i);
-        return wasi_esuccess;
-      }
-      function fd_read(fd, iovs, iovs_len, nr) {
-        var arr = new Uint32Array(mem_buf, nr, 4);
-        arr[0] = 0;
-        return wasi_esuccess;
-      }
-      function fd_seek(fd, offs, whence, ptr) {
-        return wasi_esuccess;
-      }
-
-      function sires_preopen(name) {
-        return fetch(name)
-          .then(response => response.arrayBuffer())
-          .then(bytes => wad = new Uint8Array(bytes))
-          .then(_ => filenames.push(name));
-      }
-
-      function ecow_poc() {
-        return ecow({
-          base_dir: "out/wasm",
-          extra_syscalls: {
-            fd_prestat_dir_name,
-            fd_prestat_get,
-            fd_read,
-            fd_seek,
-          }
-        }).then(obj => {
-          mem_buf = obj.exports.memory.buffer;
-          obj.start();
-        });
-      }
+      var exports, ptr;
 
       (function() {
-        sires_preopen("poc.txt").then(_ => ecow_poc());
+        window.addEventListener('sires_opened', e => exports.poc_peek(ptr));
+        ecow({ base_dir: "out/wasm" })
+          .then(obj => {
+            obj.start();
+            exports = obj.exports;
+            ptr = exports.poc_open();
+          });
       })();
     </script>
   </body>
