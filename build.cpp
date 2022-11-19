@@ -30,14 +30,14 @@ int main(int argc, char ** argv) {
 
   auto & m_steve = m->for_feature(objective_c);
   m_steve.add_impl("apple");
-  m_steve.add_unit<objc>("apple.mm");
+  m_steve.add_unit<objc>("apple");
 
   m->for_feature(webassembly).add_impl("wasm");
   m->for_feature(windows_api).add_impl("windows");
 
   auto poc = all.add_unit<app>("sires-poc");
-  poc->add_export("poc_open");
-  poc->add_export("poc_peek");
+  poc->add_feat<js>()->set("poc_open", "");
+  poc->add_feat<js>()->set("poc_peek", "");
   poc->add_ref(m);
   poc->add_unit<>("poc");
   poc->add_resource("poc.txt");
