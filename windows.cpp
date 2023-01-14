@@ -2,15 +2,15 @@ module;
 
 #include <filesystem>
 #include <fstream>
-#include <tchar.h>
-#include <windows.h>
 
 module sires;
 
-inline auto exe_path() noexcept {
-  TCHAR exepath[MAX_PATH + 1];
+extern "C" unsigned GetModuleFileNameA(void * handle, char * fname, unsigned size);
 
-  if (GetModuleFileName(0, exepath, MAX_PATH + 1) == 0) {
+inline auto exe_path() noexcept {
+  char exepath[1024];
+
+  if (GetModuleFileNameA(0, exepath, sizeof(exepath)) == 0) {
     std::terminate();
   }
 
