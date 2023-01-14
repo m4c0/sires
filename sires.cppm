@@ -1,6 +1,8 @@
-#pragma once
+module;
 #include <streambuf>
 
-namespace sires {
+export module sires;
+
+export namespace sires {
   std::streambuf * open(const char * name, const char * ext);
 }

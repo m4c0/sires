@@ -1,14 +1,16 @@
-#include "sires.hpp"
+module;
 
 #include <filesystem>
 #include <fstream>
-#include <tchar.h>
-#include <windows.h>
+
+module sires;
+
+extern "C" unsigned GetModuleFileNameA(void * handle, char * fname, unsigned size);
 
 inline auto exe_path() noexcept {
-  TCHAR exepath[MAX_PATH + 1];
+  char exepath[1024];
 
-  if (GetModuleFileName(0, exepath, MAX_PATH + 1) == 0) {
+  if (GetModuleFileNameA(0, exepath, sizeof(exepath)) == 0) {
     std::terminate();
   }
 
