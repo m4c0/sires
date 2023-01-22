@@ -37,6 +37,7 @@ int main(int argc, char ** argv) {
 }
 )");
 
+  m->for_feature(android_ndk).add_impl("android");
   m->for_feature(objective_c).add_impl("apple");
   m->for_feature(webassembly).add_impl("wasm");
   m->for_feature(windows_api).add_impl("windows");
