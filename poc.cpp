@@ -1,25 +1,21 @@
+#include <stdio.h>
+
 import sires;
 
-#include <iostream>
-
-extern "C" std::streambuf * poc_open() {
-  return sires::open("poc", "txt");
-}
-
-extern "C" int poc_peek(std::streambuf * ptr) {
-  std::unique_ptr<std::streambuf> buf { ptr };
-  if (!buf) {
-    std::cout << "Failed to read test file\n";
-    return 1;
-  }
-
-  std::istream in { buf.get() };
-  std::string line;
-  in >> line;
-  std::cout << "Got this from resource: " << line << std::endl;
-  return 0;
-}
-
 int main() {
-  return poc_peek(poc_open());
+  using namespace jute::literals;
+
+  char buf[5] {};
+  return sires::open("poc.txt"_s)
+      .fmap([&](auto && rdr) {
+        while (!rdr->ready()) {
+          // sleep, update ui, etc
+        }
+        return rdr->read(buf, 4);
+      })
+      .map([&] {
+        printf("got: [%s]\n", buf);
+        return 0;
+      })
+      .unwrap(1);
 }

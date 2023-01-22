@@ -1,8 +1,9 @@
-module;
-#include <streambuf>
-
 export module sires;
+export import hai;
+export import missingno;
+export import jute;
+export import yoyo;
 
-export namespace sires {
-  std::streambuf * open(const char * name, const char * ext);
+namespace sires {
+  export mno::req<hai::uptr<yoyo::reader>> open(jute::view name) noexcept;
 }

@@ -18,9 +18,8 @@ jobs:
         uses: m4c0/ecow/.github/actions/setup@main
         with:
           os: ${{ matrix.os }}
-      - uses: actions/checkout@v3
-        with:
-          path: sires
+      - name: 🧀 Prepare Deps
+        uses: m4c0/sires/.github/actions/setup@main
       - name: 🔨 Build
         uses: m4c0/ecow/.github/actions/compile@main
         with:

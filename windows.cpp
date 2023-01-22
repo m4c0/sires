@@ -1,25 +1,20 @@
-module;
-
-#include <filesystem>
-#include <fstream>
-
 module sires;
 
 extern "C" unsigned GetModuleFileNameA(void * handle, char * fname, unsigned size);
 
-inline auto exe_path() noexcept {
-  char exepath[1024];
+mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
+  // Assume current path as default if GetModuleFileName fails
+  jute::view path { "" };
 
-  if (GetModuleFileNameA(0, exepath, sizeof(exepath)) == 0) {
-    std::terminate();
+  char exepath[1024];
+  auto len = GetModuleFileNameA(0, exepath, sizeof(exepath));
+  if (len != 0) {
+    path = jute::view { exepath, len };
   }
 
-  return std::filesystem::path { exepath };
-}
+  const auto & [dir, file] = path.rsplit('\\');
 
-std::streambuf * sires::open(const char * name, const char * ext) {
-  const auto path = exe_path().replace_filename(name).replace_extension(ext);
-  auto * res = new std::filebuf();
-  if (!res->open(path, std::ios::binary | std::ios::in)) return nullptr;
-  return res;
+  auto p = (path + "\\"_s + name).cstr();
+
+  return mno::req { hai::uptr<yoyo::reader> { new yoyo::file_reader { p.data() } } };
 }

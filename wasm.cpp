@@ -1,33 +1,43 @@
 module;
-#include <fstream>
+// Until I understand why this is needed only for wasm
+#include <new>
 
 extern "C" void sires_open(const char * name, unsigned len, int * ref);
+extern "C" bool sires_is_ready(int ref);
 extern "C" int sires_read(int ref, int offs, void * ptr, unsigned len);
 
 module sires;
+import hai;
+import jute;
+import yoyo;
 
 namespace sires {
-  class wasm_streambuf : public std::streambuf {
+  class wasm_streambuf : public yoyo::reader {
     char m_buf[1024];
-    int m_ref;
-    int m_sofar;
-
-  protected:
-    int underflow() override {
-      const auto nr = sires_read(m_ref, m_sofar, m_buf, sizeof(m_buf));
-      if (nr == 0) return traits_type::eof();
-      m_sofar += nr;
-      setg(m_buf, m_buf, m_buf + sizeof(m_buf));
-      return nr;
-    }
+    int m_ref = -1;
 
   public:
-    explicit wasm_streambuf(const std::string & name) {
-      sires_open(name.c_str(), name.size(), &m_ref);
+    wasm_streambuf(jute::view fname) {
+      sires_open(fname.data(), fname.size(), &m_ref);
+    }
+    [[nodiscard]] bool ready() const noexcept override {
+      return sires_is_ready(m_ref);
+    }
+    [[nodiscard]] req<bool> eof() const noexcept override {
+      return {};
+    }
+    [[nodiscard]] req<void> seekg(int pos, yoyo::seek_mode mode) noexcept override {
+      return {};
+    }
+    [[nodiscard]] req<unsigned> tellg() const noexcept override {
+      return {};
+    }
+    [[nodiscard]] req<void> read(void * buffer, unsigned len) noexcept override {
+      return {};
     }
   };
 }
 
-std::streambuf * sires::open(const char * name, const char * ext) {
-  return new wasm_streambuf { std::string { name } + "." + ext };
+mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
+  return mno::req { hai::uptr<yoyo::reader> { new wasm_streambuf { name } } };
 }
