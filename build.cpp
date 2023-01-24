@@ -30,17 +30,14 @@ int main(int argc, char ** argv) {
   fetch(name)
     .then(response => response.arrayBuffer())
     .then(bytes => new Uint8Array(bytes))
-    .then(array => ecow_globals.sires[ref] = array);
-})");
-  m->add_feat<js>()->set("sires_is_ready", R"((ref) => {
-  return !!ecow_globals.sires[ref];
+    .then(array => ecow_globals.sires[ref] = array)
+    .then(_ => window.dispatchEvent(new CustomEvent('sires_opened', { detail: ref })));
 })");
   m->add_feat<js>()->set("sires_read", R"((ref, offs, ptr, len) => {
   const buf = ecow_globals.sires[ref].subarray(offs, len);
   new Uint8Array(ecow_buffer, ptr, len).set(buf);
   return buf.length;
-}
-)");
+})");
 
   m->for_feature(android_ndk).add_impl("android");
   m->for_feature(objective_c).add_impl("apple");
@@ -48,7 +45,8 @@ int main(int argc, char ** argv) {
   m->for_feature(windows_api).add_impl("windows");
 
   auto poc = all.add_unit<app>("sires-poc");
-  poc->add_feat<js>()->set("main", "");
+  poc->add_feat<js>()->set("poc_open", "");
+  poc->add_feat<js>()->set("poc_read", "");
   poc->add_ref(m);
   poc->add_unit<>("poc");
   poc->add_resource("poc.txt");

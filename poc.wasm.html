@@ -3,11 +3,15 @@
   <body>
     <script type="text/javascript" src="out/wasm/sires-poc.js"></script>
     <script type="text/javascript">
+      var exports, ptr;
+
       (function() {
+        window.addEventListener('sires_opened', e => exports.poc_read(ptr));
         ecow({ base_dir: "out/wasm" })
           .then(obj => {
             obj.start();
-            obj.exports.main();
+            exports = obj.exports;
+            ptr = exports.poc_open();
           });
       })();
     </script>

@@ -1,11 +1,11 @@
+module;
+extern "C" void sires_open(const char * name, unsigned len, int * ref);
+extern "C" int sires_read(int ref, int offs, void * ptr, unsigned len);
+
 module sires;
 import hai;
 import jute;
 import yoyo;
-
-extern "C" void sires_open(const char * name, unsigned len, int * ref);
-extern "C" bool sires_is_ready(int ref);
-extern "C" int sires_read(int ref, int offs, void * ptr, unsigned len);
 
 namespace sires {
   class wasm_streambuf : public yoyo::reader {
@@ -15,9 +15,6 @@ namespace sires {
   public:
     wasm_streambuf(jute::view fname) {
       sires_open(fname.data(), fname.size(), &m_ref);
-    }
-    [[nodiscard]] bool ready() const noexcept override {
-      return sires_is_ready(m_ref);
     }
     [[nodiscard]] req<bool> eof() const noexcept override {
       return {};
