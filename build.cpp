@@ -9,11 +9,16 @@ using namespace ecow;
 int main(int argc, char ** argv) {
   seq all { "all" };
 
+  auto yo = unit::create<per_feat<seq>>("yo");
+  yo->for_feature(posix).add_ref(yoyo_libc());
+  yo->for_feature(android_ndk).add_ref(yoyo());
+  yo->for_feature(webassembly).add_ref(yoyo());
+
   auto m = all.add_unit<per_feat<mod>>("sires");
   m->add_wsdep("hai", hai());
   m->add_wsdep("jute", jute());
   m->add_wsdep("missingno", missingno());
-  m->add_wsdep("yoyo", yoyo());
+  m->add_wsdep("yoyo", yo);
   m->add_feat<js>()->set(
       "sires_open",
       R"((nm_ptr, len, ref_ptr) => {
@@ -25,24 +30,25 @@ int main(int argc, char ** argv) {
   fetch(name)
     .then(response => response.arrayBuffer())
     .then(bytes => new Uint8Array(bytes))
-    .then(array => ecow_globals.sires[ref] = array);
+    .then(array => ecow_globals.sires[ref] = array)
+    .then(_ => window.dispatchEvent(new CustomEvent('sires_opened', { detail: ref })));
 })");
-  m->add_feat<js>()->set("sires_is_ready", R"((ref) => {
-  return !!ecow_globals.sires[ref];
+  m->add_feat<js>()->set("sires_fsize", R"((ref) => {
+  return ecow_globals.sires[ref].length;
 })");
   m->add_feat<js>()->set("sires_read", R"((ref, offs, ptr, len) => {
   const buf = ecow_globals.sires[ref].subarray(offs, len);
   new Uint8Array(ecow_buffer, ptr, len).set(buf);
-  return buf.length;
-}
-)");
+})");
 
+  m->for_feature(android_ndk).add_impl("android");
   m->for_feature(objective_c).add_impl("apple");
   m->for_feature(webassembly).add_impl("wasm");
   m->for_feature(windows_api).add_impl("windows");
 
   auto poc = all.add_unit<app>("sires-poc");
-  poc->add_feat<js>()->set("main", "");
+  poc->add_feat<js>()->set("poc_open", "");
+  poc->add_feat<js>()->set("poc_read", "");
   poc->add_ref(m);
   poc->add_unit<>("poc");
   poc->add_resource("poc.txt");

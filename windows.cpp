@@ -1,10 +1,13 @@
 module sires;
+import yoyo_libc;
 
 extern "C" unsigned GetModuleFileNameA(void * handle, char * fname, unsigned size);
 
 mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
+  using namespace jute::literals;
+
   // Assume current path as default if GetModuleFileName fails
-  jute::view path { "" };
+  auto path = ""_s;
 
   char exepath[1024];
   auto len = GetModuleFileNameA(0, exepath, sizeof(exepath));
