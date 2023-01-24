@@ -33,10 +33,12 @@ int main(int argc, char ** argv) {
     .then(array => ecow_globals.sires[ref] = array)
     .then(_ => window.dispatchEvent(new CustomEvent('sires_opened', { detail: ref })));
 })");
+  m->add_feat<js>()->set("sires_fsize", R"((ref) => {
+  return ecow_globals.sires[ref].length;
+})");
   m->add_feat<js>()->set("sires_read", R"((ref, offs, ptr, len) => {
   const buf = ecow_globals.sires[ref].subarray(offs, len);
   new Uint8Array(ecow_buffer, ptr, len).set(buf);
-  return buf.length;
 })");
 
   m->for_feature(android_ndk).add_impl("android");
