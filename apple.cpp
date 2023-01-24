@@ -3,6 +3,7 @@ module;
 
 module sires;
 import traits;
+import yoyo_libc;
 
 namespace {
   struct cfdel {

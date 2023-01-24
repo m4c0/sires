@@ -9,11 +9,16 @@ using namespace ecow;
 int main(int argc, char ** argv) {
   seq all { "all" };
 
+  auto yo = unit::create<per_feat<seq>>("yo");
+  yo->for_feature(posix).add_ref(yoyo_libc());
+  yo->for_feature(android_ndk).add_ref(yoyo());
+  yo->for_feature(webassembly).add_ref(yoyo());
+
   auto m = all.add_unit<per_feat<mod>>("sires");
   m->add_wsdep("hai", hai());
   m->add_wsdep("jute", jute());
   m->add_wsdep("missingno", missingno());
-  m->add_wsdep("yoyo", yoyo());
+  m->add_wsdep("yoyo", yo);
   m->add_feat<js>()->set(
       "sires_open",
       R"((nm_ptr, len, ref_ptr) => {

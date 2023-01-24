@@ -1,6 +1,5 @@
-#include <stdio.h>
-
 import sires;
+extern "C" int printf(const char *, ...);
 
 int main() {
   using namespace jute::literals;
