@@ -18,7 +18,7 @@ auto sires() {
   m->add_wsdep("jute", jute());
   m->add_wsdep("missingno", missingno());
   m->add_wsdep("yoyo", yo);
-  m->add_feat<js>()->set(
+  m->add_feat<inline_js>(
       "sires_open",
       R"((nm_ptr, len, ref_ptr) => {
   const name = new TextDecoder().decode(new Uint8Array(ecow_buffer, nm_ptr, len));
@@ -32,10 +32,10 @@ auto sires() {
     .then(array => ecow_globals.sires[ref] = array)
     .then(_ => window.dispatchEvent(new CustomEvent('sires_opened', { detail: ref })));
 })");
-  m->add_feat<js>()->set("sires_fsize", R"((ref) => {
+  m->add_feat<inline_js>("sires_fsize", R"((ref) => {
   return ecow_globals.sires[ref].length;
 })");
-  m->add_feat<js>()->set("sires_read", R"((ref, offs, ptr, len) => {
+  m->add_feat<inline_js>("sires_read", R"((ref, offs, ptr, len) => {
   const buf = ecow_globals.sires[ref].subarray(offs, len);
   new Uint8Array(ecow_buffer, ptr, len).set(buf);
 })");
