@@ -1,4 +1,4 @@
 *.json
 build
-build-poc
+build.exe
 out
