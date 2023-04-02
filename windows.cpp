@@ -17,7 +17,7 @@ mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
 
   const auto & [dir, file] = path.rsplit('\\');
 
-  auto p = (path + "\\"_s + name).cstr();
+  auto p = (dir + "\\"_s + name).cstr();
 
   return mno::req { hai::uptr<yoyo::reader> { new yoyo::file_reader { p.data() } } };
 }
