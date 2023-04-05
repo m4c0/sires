@@ -41,7 +41,7 @@ auto sires() {
 })");
 
   m->for_feature(android_ndk).add_impl("android");
-  m->for_feature(android_ndk).add_system_library("AAudio");
+  m->for_feature(android_ndk).add_system_library("android");
 
   m->for_feature(objective_c).add_impl("apple");
   m->for_feature(objective_c).add_unit<objc>("apple");
