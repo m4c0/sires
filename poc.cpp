@@ -1,7 +1,7 @@
 import silog;
 import sires;
 
-extern "C" yoyo::reader * poc_open() {
+extern "C" yoyo::reader * __attribute__((export_name("poc_open"))) poc_open() {
   using namespace jute::literals;
 
   return sires::open("poc.txt"_s)
@@ -10,7 +10,7 @@ extern "C" yoyo::reader * poc_open() {
       })
       .unwrap(nullptr);
 }
-extern "C" int poc_read(yoyo::reader * rdr) {
+extern "C" int __attribute__((export_name("poc_read"))) poc_read(yoyo::reader * rdr) {
   char buf[5] {};
   return rdr->read(buf, 4)
       .map([&] {
