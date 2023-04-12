@@ -1,7 +1,7 @@
 module;
-extern "C" void sires_open(const char * name, unsigned len, int * ref);
-extern "C" int sires_fsize(int ref);
-extern "C" void sires_read(int ref, int offs, void * ptr, unsigned len);
+extern "C" void __attribute__((import_name("sires_open"))) sires_open(const char * name, unsigned len, int * ref);
+extern "C" int __attribute__((import_name("sires_fsize"))) sires_fsize(int ref);
+extern "C" void __attribute__((import_name("sires_read"))) sires_read(int ref, int offs, void * ptr, unsigned len);
 
 module sires;
 import hai;
