@@ -2,6 +2,7 @@
 #include "../hai/build.hpp"
 #include "../jute/build.hpp"
 #include "../missingno/build.hpp"
+#include "../traits/build.hpp"
 #include "../yoyo/build.hpp"
 #include "ecow.hpp"
 
@@ -17,6 +18,7 @@ auto sires() {
   m->add_wsdep("hai", hai());
   m->add_wsdep("jute", jute());
   m->add_wsdep("missingno", missingno());
+  m->add_wsdep("traits", traits());
   m->add_wsdep("yoyo", yo);
   m->add_feat<inline_js>(
       "sires_open",
