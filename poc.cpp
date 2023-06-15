@@ -14,7 +14,7 @@ extern "C" int __attribute__((export_name("poc_read"))) poc_read(yoyo::reader * 
   char buf[5] {};
   return rdr->read(buf, 4)
       .map([&] {
-        silog::log(silog::info, buf);
+        silog::log(silog::info, "Got: (%s)", buf);
         return 0;
       })
       .unwrap(1);
@@ -32,8 +32,10 @@ int main() {
         return rdr->read(buf, 4);
       })
       .map([&] {
-        silog::log(silog::info, buf);
+        silog::log(silog::info, "Got: (%s)", buf);
         return 0;
       })
-      .unwrap(1);
+      .take([](auto err) {
+        silog::log(silog::error, "Error: %s", err);
+      });
 }
