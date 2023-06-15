@@ -8,13 +8,14 @@ import yoyo_libc;
 namespace {
   struct cfdel {
     void operator()(const void * ptr) {
-      CFRelease(ptr);
+      if (ptr) CFRelease(ptr);
     }
   };
   template<typename T>
   using cfptr = hai::holder<traits::remove_ptr_t<T>, cfdel>;
+  using req = mno::req<hai::uptr<yoyo::reader>>;
 }
-mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
+req sires::open(jute::view name) noexcept {
   cfptr<CFStringRef> nsname { CFStringCreateWithBytesNoCopy(
       nullptr,
       (const UInt8 *)name.data(),
@@ -24,7 +25,10 @@ mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
       kCFAllocatorNull) };
   auto bundle = CFBundleGetMainBundle();
   cfptr<CFURLRef> url { CFBundleCopyResourceURL(bundle, *nsname, nullptr, nullptr) };
+  if (!*url) return req::failed("Could not find resource file");
+
   cfptr<CFStringRef> path { CFURLCopyFileSystemPath(*url, kCFURLPOSIXPathStyle) };
+  if (!*path) return req::failed("Could not open resource file");
 
   hai::cstr p { static_cast<unsigned>(CFStringGetLength(*path)) };
   CFStringGetCString(*path, p.data(), p.size() + 1, kCFStringEncodingUTF8);
