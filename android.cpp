@@ -48,6 +48,11 @@ namespace sires {
     [[nodiscard]] req<unsigned> tellg() const noexcept override {
       return req<unsigned> { AAsset_getLength(*m_asset) - AAsset_getRemainingLength(*m_asset) };
     }
+    [[nodiscard]] req<unsigned> read_up_to(void * buffer, unsigned len) noexcept override {
+      auto res = AAsset_read(*m_asset, buffer, len);
+      if (res < 0) return req<unsigned>::failed("failed to read");
+      return req<unsigned> { static_cast<unsigned>(res) };
+    }
     [[nodiscard]] req<void> read(void * buffer, unsigned len) noexcept override {
       if (AAsset_read(*m_asset, buffer, len) != len) return req<void>::failed("failed to read");
       return {};
