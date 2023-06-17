@@ -44,6 +44,16 @@ namespace sires {
     [[nodiscard]] req<unsigned> tellg() const noexcept override {
       return req<unsigned> { m_pos };
     }
+    [[nodiscard]] req<unsigned> read_up_to(void * buffer, unsigned len) noexcept override {
+      auto npos = m_pos + len;
+      auto fsize = sires_fsize(m_ref);
+      unsigned l = npos >= fsize ? fsize - m_pos : len;
+
+      sires_read(m_ref, m_pos, buffer, l);
+
+      m_pos = npos >= fsize ? fsize : npos;
+      return req<unsigned> { l };
+    }
     [[nodiscard]] req<void> read(void * buffer, unsigned len) noexcept override {
       auto npos = m_pos + len;
       if (npos >= sires_fsize(m_ref)) return req<void>::failed("buffer overflow");
