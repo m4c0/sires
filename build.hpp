@@ -10,7 +10,7 @@ auto sires() {
   yo->for_feature(android_ndk).add_ref(yoyo());
   yo->for_feature(webassembly).add_ref(yoyo());
 
-  auto m = unit::create<per_feat<box>>("sires");
+  auto m = unit::create<box>("sires");
   m->add_wsdep("yoyo", yo);
   m->add_feat<inline_js>(
       "sires_open",
@@ -33,7 +33,5 @@ auto sires() {
   const buf = ecow_globals.sires[ref].subarray(offs, len);
   new Uint8Array(ecow_buffer, ptr, len).set(buf);
 })");
-
-  m->for_feature(objective_c).add_unit<objc>("apple");
   return m;
 }
