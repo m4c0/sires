@@ -19,3 +19,14 @@ namespace sires {
     });
   }
 }
+
+#if __ANDROID__
+#pragma ecow add_impl android
+#pragma ecow add_system_library android
+#elif __APPLE__
+#pragma ecow add_impl apple
+#elif _WIN32
+#pragma ecow add_impl windows
+#elif WASM
+#pragma ecow add_impl wasm
+#endif
