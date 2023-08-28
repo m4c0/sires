@@ -5,13 +5,7 @@
 auto sires() {
   using namespace ecow;
 
-  auto yo = unit::create<per_feat<seq>>("yo");
-  yo->for_feature(posix).add_ref(yoyo_libc());
-  yo->for_feature(android_ndk).add_ref(yoyo());
-  yo->for_feature(webassembly).add_ref(yoyo());
-
   auto m = unit::create<box>("sires");
-  m->add_wsdep("yoyo", yo);
   m->add_feat<inline_js>(
       "sires_open",
       R"((nm_ptr, len, ref_ptr) => {
