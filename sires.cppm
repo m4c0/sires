@@ -25,6 +25,7 @@ namespace sires {
 #pragma ecow add_system_library android
 #elif __APPLE__
 #pragma ecow add_impl apple
+#pragma ecow add_framework CoreFoundation
 #elif _WIN32
 #pragma ecow add_impl windows
 #elif WASM
