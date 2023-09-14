@@ -1,3 +1,6 @@
+#pragma leco app
+#pragma leco add_resource "poc.txt"
+
 import silog;
 import sires;
 
