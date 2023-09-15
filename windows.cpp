@@ -1,5 +1,5 @@
 module sires;
-import yoyo_libc;
+import yoyo;
 
 extern "C" unsigned GetModuleFileNameA(void * handle, char * fname, unsigned size);
 
