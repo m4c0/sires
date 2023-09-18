@@ -1,9 +1,14 @@
+module;
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 module sires;
 import yoyo;
 
-extern "C" unsigned GetModuleFileNameA(void * handle, char * fname, unsigned size);
-
-mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
+namespace {
+  using req = mno::req<hai::uptr<yoyo::reader>>;
+}
+req sires::open(jute::view name) noexcept {
   using namespace jute::literals;
 
   // Assume current path as default if GetModuleFileName fails
@@ -18,6 +23,9 @@ mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
   const auto & [dir, file] = path.rsplit('\\');
 
   auto p = (dir + "\\"_s + name).cstr();
+
+  DWORD attr = GetFileAttributes(p.data());
+  if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY)) return req::failed("Resource not found");
 
   return mno::req { hai::uptr<yoyo::reader> { new yoyo::file_reader { p.data() } } };
 }
