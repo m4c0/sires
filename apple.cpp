@@ -14,33 +14,40 @@ namespace {
   };
   template<typename T>
   using cfptr = hai::holder<traits::remove_ptr_t<T>, cfdel>;
-  using req = mno::req<hai::uptr<yoyo::reader>>;
+
+  auto real_path_name(jute::view name) noexcept {
+    using req = mno::req<hai::cstr>;
+
+    cfptr<CFStringRef> nsname { CFStringCreateWithBytesNoCopy(
+        nullptr,
+        (const UInt8 *)name.data(),
+        name.size(),
+        kCFStringEncodingUTF8,
+        false,
+        kCFAllocatorNull) };
+    auto bundle = CFBundleGetMainBundle();
+    cfptr<CFURLRef> url { CFBundleCopyResourceURL(bundle, *nsname, nullptr, nullptr) };
+    if (!*url) return req::failed("Could not find resource file");
+
+    cfptr<CFStringRef> path { CFURLCopyFileSystemPath(*url, kCFURLPOSIXPathStyle) };
+    if (!*path) return req::failed("Could not open resource file");
+
+    hai::cstr p { static_cast<unsigned>(CFStringGetLength(*path)) };
+    CFStringGetCString(*path, p.data(), p.size() + 1, kCFStringEncodingUTF8);
+
+    return req { traits::move(p) };
+  }
 }
-req sires::open(jute::view name) noexcept {
-  cfptr<CFStringRef> nsname { CFStringCreateWithBytesNoCopy(
-      nullptr,
-      (const UInt8 *)name.data(),
-      name.size(),
-      kCFStringEncodingUTF8,
-      false,
-      kCFAllocatorNull) };
-  auto bundle = CFBundleGetMainBundle();
-  cfptr<CFURLRef> url { CFBundleCopyResourceURL(bundle, *nsname, nullptr, nullptr) };
-  if (!*url) return req::failed("Could not find resource file");
-
-  cfptr<CFStringRef> path { CFURLCopyFileSystemPath(*url, kCFURLPOSIXPathStyle) };
-  if (!*path) return req::failed("Could not open resource file");
-
-  hai::cstr p { static_cast<unsigned>(CFStringGetLength(*path)) };
-  CFStringGetCString(*path, p.data(), p.size() + 1, kCFStringEncodingUTF8);
-
-  // release all that shite
-  return mno::req { hai::uptr<yoyo::reader> { new yoyo::file_reader { p.data() } } };
+mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
+  return real_path_name(name).map([](auto & p) {
+    return hai::uptr<yoyo::reader> { new yoyo::file_reader { p.data() } };
+  });
 }
-traits::ints::uint64_t sires::stat(const char * name) noexcept {
-  struct stat s {};
-  stat(name, &s);
-  auto mtime = s.st_mtimespec;
-  return static_cast<uint64_t>(mtime.tv_sec) * 1000000000ul + static_cast<uint64_t>(mtime.tv_nsec);
-  return 0;
+mno::req<traits::ints::uint64_t> sires::stat(jute::view name) noexcept {
+  return real_path_name(name).map([](auto & name) -> traits::ints::uint64_t {
+    struct stat s {};
+    stat(name.data(), &s);
+    auto mtime = s.st_mtimespec;
+    return static_cast<uint64_t>(mtime.tv_sec) * 1000000000ul + static_cast<uint64_t>(mtime.tv_nsec);
+  });
 }

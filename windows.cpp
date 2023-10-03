@@ -9,30 +9,38 @@ import yoyo;
 
 namespace {
   using req = mno::req<hai::uptr<yoyo::reader>>;
-}
-req sires::open(jute::view name) noexcept {
-  using namespace jute::literals;
 
-  // Assume current path as default if GetModuleFileName fails
-  auto path = ""_s;
+  auto real_path_name(jute::view name) noexcept {
+    using namespace jute::literals;
+    using req = mno::req<hai::cstr>;
 
-  char exepath[1024];
-  auto len = GetModuleFileNameA(0, exepath, sizeof(exepath));
-  if (len != 0) {
-    path = jute::view { exepath, len };
+    // Assume current path as default if GetModuleFileName fails
+    auto path = ""_s;
+
+    char exepath[1024];
+    auto len = GetModuleFileNameA(0, exepath, sizeof(exepath));
+    if (len != 0) {
+      path = jute::view { exepath, len };
+    }
+
+    const auto & [dir, file] = path.rsplit('\\');
+
+    auto p = (dir + "\\"_s + name).cstr();
+    DWORD attr = GetFileAttributes(p.data());
+    if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY)) return req::failed("Resource not found");
+
+    return req { traits::move(p) };
   }
-
-  const auto & [dir, file] = path.rsplit('\\');
-
-  auto p = (dir + "\\"_s + name).cstr();
-
-  DWORD attr = GetFileAttributes(p.data());
-  if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY)) return req::failed("Resource not found");
-
-  return mno::req { hai::uptr<yoyo::reader> { new yoyo::file_reader { p.data() } } };
 }
-traits::ints::uint64_t sires::stat(const char * name) noexcept {
-  struct __stat64 s {};
-  _stat64(name, &s);
-  return s.st_mtime;
+mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
+  return real_path_name(name).map([](auto & p) {
+    return hai::uptr<yoyo::reader> { new yoyo::file_reader { p.data() } };
+  });
+}
+mno::req<traits::ints::uint64_t> sires::stat(jute::view name) noexcept {
+  return real_path_name(name).map([](auto & name) -> traits::ints::uint64_t {
+    struct __stat64 s {};
+    _stat64(p.data(), &s);
+    return s.st_mtime;
+  });
 }

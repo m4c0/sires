@@ -41,8 +41,13 @@ int main() {
         return rdr->read(buf, 4);
       })
       .map([&] {
-        auto s = sires::stat("poc.txt");
-        silog::log(silog::info, "Got: (%s) - state: %lu", buf, s);
+        silog::log(silog::info, "Got: (%s)", buf);
+      })
+      .fmap([] {
+        return sires::stat("poc.txt");
+      })
+      .map([](auto ts) {
+        silog::log(silog::info, "Mod. timestamp: %lu", ts);
         return 0;
       })
       .take([](auto err) {

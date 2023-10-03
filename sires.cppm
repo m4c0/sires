@@ -19,7 +19,7 @@ namespace sires {
     });
   }
 
-  export traits::ints::uint64_t stat(const char * name) noexcept;
+  export mno::req<traits::ints::uint64_t> stat(jute::view name) noexcept;
 }
 
 #if __ANDROID__
