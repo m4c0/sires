@@ -18,6 +18,8 @@ namespace sires {
       });
     });
   }
+
+  export traits::ints::uint64_t stat(const char * name) noexcept;
 }
 
 #if __ANDROID__

@@ -1,5 +1,6 @@
 module;
 #include <CoreFoundation/CoreFoundation.h>
+#include <sys/stat.h>
 
 module sires;
 import traits;
@@ -35,4 +36,11 @@ req sires::open(jute::view name) noexcept {
 
   // release all that shite
   return mno::req { hai::uptr<yoyo::reader> { new yoyo::file_reader { p.data() } } };
+}
+traits::ints::uint64_t sires::stat(const char * name) noexcept {
+  struct stat s {};
+  stat(name, &s);
+  auto mtime = s.st_mtimespec;
+  return static_cast<uint64_t>(mtime.tv_sec) * 1000000000ul + static_cast<uint64_t>(mtime.tv_nsec);
+  return 0;
 }

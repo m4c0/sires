@@ -1,8 +1,10 @@
 module;
 #define WIN32_LEAN_AND_MEAN
+#include <sys/stat.h>
 #include <windows.h>
 
 module sires;
+import traits;
 import yoyo;
 
 namespace {
@@ -28,4 +30,9 @@ req sires::open(jute::view name) noexcept {
   if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY)) return req::failed("Resource not found");
 
   return mno::req { hai::uptr<yoyo::reader> { new yoyo::file_reader { p.data() } } };
+}
+traits::ints::uint64_t sires::stat(const char * name) noexcept {
+  struct __stat64 s {};
+  _stat64(name, &s);
+  return s.st_mtime;
 }

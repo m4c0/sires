@@ -41,7 +41,8 @@ int main() {
         return rdr->read(buf, 4);
       })
       .map([&] {
-        silog::log(silog::info, "Got: (%s)", buf);
+        auto s = sires::stat("poc.txt");
+        silog::log(silog::info, "Got: (%s) - state: %lu", buf, s);
         return 0;
       })
       .take([](auto err) {
