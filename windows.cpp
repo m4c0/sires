@@ -40,7 +40,7 @@ mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
 mno::req<traits::ints::uint64_t> sires::stat(jute::view name) noexcept {
   return real_path_name(name).map([](auto & name) -> traits::ints::uint64_t {
     struct __stat64 s {};
-    _stat64(p.data(), &s);
+    _stat64(name.data(), &s);
     return s.st_mtime;
   });
 }
