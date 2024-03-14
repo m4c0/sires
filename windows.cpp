@@ -33,9 +33,16 @@ namespace {
   }
 }
 mno::req<hai::uptr<yoyo::reader>> sires::open(jute::view name) noexcept {
-  return real_path_name(name).map([](auto & p) {
-    return hai::uptr<yoyo::reader> { new yoyo::file_reader { p.data() } };
-  });
+  return real_path_name(name)
+      .fmap([](auto & path) {
+        return yoyo::file_reader::open(path.data());
+      })
+      .map([](auto && fr) {
+        return new yoyo::file_reader { traits::move(fr) };
+      })
+      .map([](auto * r) {
+        return hai::uptr<yoyo::reader> { r };
+      });
 }
 mno::req<traits::ints::uint64_t> sires::stat(jute::view name) noexcept {
   return real_path_name(name).map([](auto & name) -> traits::ints::uint64_t {
