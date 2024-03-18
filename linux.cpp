@@ -12,19 +12,17 @@ namespace {
   auto real_path_name(jute::view name) noexcept {
     using req = mno::req<hai::cstr>;
 
-    hai::cstr buf { 10240 };
-    auto res = readlink("/proc/self/exe", buf.data(), buf.size());
+    char buf[1024];
+    auto res = readlink("/proc/self/exe", buf, sizeof(buf));
     if (res == -1) {
       return req::failed("Failed to find executable name");
     }
-    buf.data()[res] = 0;
+    buf[res] = 0;
 
-    const auto dir = dirname(buf.data());
-    if (dir != buf.data()) {
-      strcpy(buf.data(), dir);
-    }
+    auto dir = jute::view::unsafe(dirname(buf));
+    auto p = (dir + "/" + name).cstr();
 
-    return req { traits::move(buf) };
+    return req { traits::move(p) };
   }
 }
 
