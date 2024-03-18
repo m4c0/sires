@@ -32,4 +32,6 @@ namespace sires {
 #pragma leco add_impl windows
 #elif WASM
 #pragma leco add_impl wasm
+#elif __linux__
+#pragma leco add_impl linux
 #endif
