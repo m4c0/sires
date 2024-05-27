@@ -27,7 +27,7 @@ namespace sires {
 
   export mno::req<hai::array<char>> slurp(jute::view name) {
     return sires::open(name).fmap([](auto & rdr) {
-      return rdr->size().fmap([&](auto sz) {
+      return rdr->size().fmap([&](unsigned sz) {
         hai::array<char> buf { sz };
         return rdr->read(buf.begin(), sz).map([&] {
           return traits::move(buf);
