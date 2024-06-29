@@ -12,24 +12,18 @@ export import yoyo;
 namespace sires {
   mno::req<hai::cstr> real_path_name(jute::view name) noexcept;
 
-  export mno::req<hai::uptr<yoyo::reader>> open(jute::view name) noexcept {
+  export mno::req<yoyo::file_reader> open(jute::view name) noexcept {
     return real_path_name(name)
         .fmap([](auto & path) {
           return yoyo::file_reader::open(path.data());
-        })
-        .map([](auto && fr) {
-          return new yoyo::file_reader { traits::move(fr) };
-        })
-        .map([](auto * r) {
-          return hai::uptr<yoyo::reader> { r };
         });
   }
 
   export mno::req<hai::array<char>> slurp(jute::view name) {
     return sires::open(name).fmap([](auto & rdr) {
-      return rdr->size().fmap([&](unsigned sz) {
+      return rdr.size().fmap([&](unsigned sz) {
         hai::array<char> buf { sz };
-        return rdr->read(buf.begin(), sz).map([&] {
+        return rdr.read(buf.begin(), sz).map([&] {
           return traits::move(buf);
         });
       });
