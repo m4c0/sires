@@ -22,10 +22,8 @@ int main() {
         return sires::stat("poc.txt");
       })
       .map([](auto ts) {
-        silog::log(silog::info, "Mod. timestamp: %lu", ts);
+        silog::log(silog::info, "Mod. timestamp: %llu", ts);
         return 0;
       })
-      .take([](auto err) {
-        silog::log(silog::error, "Error: %s", err);
-      });
+      .log_error();
 }
