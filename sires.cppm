@@ -42,16 +42,16 @@ namespace sires {
   }
 }
 
-#if __ANDROID__
+#if LECO_TARGET_ANDROID
 #pragma leco add_impl android
 #pragma leco add_system_library android
-#elif __APPLE__
+#elif LECO_TARGET_APPLE
 #pragma leco add_impl apple
 #pragma leco add_framework CoreFoundation
-#elif _WIN32
+#elif LECO_TARGET_WINDOWS
 #pragma leco add_impl windows
-#elif WASM
+#elif LECO_TARGET_WASM
 #pragma leco add_impl wasm
-#elif __linux__
+#elif LECO_TARGET_LINUX
 #pragma leco add_impl linux
 #endif
