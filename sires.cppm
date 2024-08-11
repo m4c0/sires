@@ -28,7 +28,9 @@ namespace sires {
   }
 
   export mno::req<traits::ints::uint64_t> stat(jute::view name) noexcept {
-    auto t = mtime::of(real_path_name(name).data());
+    auto rp = real_path_name(name);
+    if (rp.size() == 0) return mno::req<traits::ints::uint64_t>::failed("Could not find resource");
+    auto t = mtime::of(rp.data());
     return t > 0 ? mno::req{ t } : mno::req<traits::ints::uint64_t>::failed("Could not check mod time of resource");
   }
 }
