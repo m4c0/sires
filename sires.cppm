@@ -3,12 +3,20 @@ export module sires;
 import hai;
 import missingno;
 import mtime;
+import jojo;
 import jute;
+import silog;
 import traits;
 import yoyo;
 
 namespace sires {
   hai::cstr real_path_name(jute::view name);
+
+  export void jojo(jute::view name, void * ptr, auto fn) {
+    auto rp = real_path_name(name);
+    silog::log(silog::info, "Trying to read resource [%s]", rp.begin());
+    ::jojo::read(rp, ptr, fn);
+  }
 
   export mno::req<yoyo::file_reader> open(jute::view name) noexcept {
     auto rp = real_path_name(name);

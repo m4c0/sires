@@ -6,6 +6,11 @@ import silog;
 import sires;
 
 int main() {
+  sires::jojo("poc.txt", nullptr, [](void *, auto & data) {
+    silog::log(silog::debug, "Got %d bytes [%.*s]", data.size(), data.size(), data.begin());
+  });
+
+#ifndef LECO_TARGET_WASM
   using namespace jute::literals;
 
   char buf[5] {};
@@ -28,4 +33,5 @@ int main() {
         return 0;
       })
       .log_error();
+#endif
 }
