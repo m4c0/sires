@@ -7,9 +7,8 @@ module sires;
 import traits;
 import yoyo;
 
-mno::req<hai::cstr> sires::real_path_name(jute::view name) noexcept {
+hai::cstr sires::real_path_name(jute::view name) {
   using namespace jute::literals;
-  using req = mno::req<hai::cstr>;
 
   // Assume current path as default if GetModuleFileName fails
   auto path = ""_s;
@@ -24,7 +23,7 @@ mno::req<hai::cstr> sires::real_path_name(jute::view name) noexcept {
 
   auto p = (dir + "\\"_s + name).cstr();
   DWORD attr = GetFileAttributes(p.data());
-  if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY)) return req::failed("Resource not found");
+  if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY)) return {};
 
-  return req { traits::move(p) };
+  return traits::move(p);
 }

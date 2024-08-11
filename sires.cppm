@@ -8,13 +8,12 @@ import traits;
 import yoyo;
 
 namespace sires {
-  mno::req<hai::cstr> real_path_name(jute::view name) noexcept;
+  hai::cstr real_path_name(jute::view name);
 
   export mno::req<yoyo::file_reader> open(jute::view name) noexcept {
-    return real_path_name(name)
-        .fmap([](auto & path) {
-          return yoyo::file_reader::open(path.data());
-        });
+    auto rp = real_path_name(name);
+    if (rp.size() == 0) return mno::req<yoyo::file_reader>::failed("Could not find resource");
+    return yoyo::file_reader::open(real_path_name(name).data());
   }
 
   export mno::req<hai::array<char>> slurp(jute::view name) {
@@ -29,14 +28,8 @@ namespace sires {
   }
 
   export mno::req<traits::ints::uint64_t> stat(jute::view name) noexcept {
-    constexpr const auto mtime_succeeded = [](auto t) {
-      return t != 0;
-    };
-    return real_path_name(name)
-        .map([](auto & name) -> traits::ints::uint64_t {
-          return mtime::of(name.data());
-        })
-        .assert(mtime_succeeded, "Failed to open resource");
+    auto t = mtime::of(real_path_name(name).data());
+    return t > 0 ? mno::req{ t } : mno::req<traits::ints::uint64_t>::failed("Could not check mod time of resource");
   }
 }
 
