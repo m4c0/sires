@@ -1,13 +1,11 @@
 module;
-#define MTIME_IMPLEMENTATION
-#include "../mtime/mtime.h"
-
 export module sires;
-export import hai;
-export import missingno;
-export import jute;
-export import traits;
-export import yoyo;
+import hai;
+import missingno;
+import mtime;
+import jute;
+import traits;
+import yoyo;
 
 namespace sires {
   mno::req<hai::cstr> real_path_name(jute::view name) noexcept;
@@ -36,7 +34,7 @@ namespace sires {
     };
     return real_path_name(name)
         .map([](auto & name) -> traits::ints::uint64_t {
-          return mtime_of(name.data());
+          return mtime::of(name.data());
         })
         .assert(mtime_succeeded, "Failed to open resource");
   }
