@@ -35,11 +35,12 @@ namespace sires {
     });
   }
 
-  export mno::req<traits::ints::uint64_t> stat(jute::view name) noexcept {
+  using uint64_t = traits::ints::uint64_t;
+  export mno::req<uint64_t> stat(jute::view name) noexcept {
     auto rp = real_path_name(name);
-    if (rp.size() == 0) return mno::req<traits::ints::uint64_t>::failed("Could not find resource");
-    auto t = mtime::of(rp.data());
-    return t > 0 ? mno::req{ t } : mno::req<traits::ints::uint64_t>::failed("Could not check mod time of resource");
+    if (rp.size() == 0) return mno::req<uint64_t>::failed("Could not find resource");
+    uint64_t t = mtime::of(rp.data());
+    return t > 0 ? mno::req{ t } : mno::req<uint64_t>::failed("Could not check mod time of resource");
   }
 }
 
