@@ -23,9 +23,7 @@ static hai::cstr err(const char * msg) {
   return {};
 }
 
-mno::req<hai::cstr> sires::real_path_name(jute::view name) noexcept {
-  using req = mno::req<hai::cstr>;
-
+hai::cstr sires::real_path_name(jute::view name) {
   cfptr<CFStringRef> nsname { CFStringCreateWithBytesNoCopy(
       nullptr,
       (const UInt8 *)name.data(),
