@@ -10,8 +10,13 @@ import traits;
 import yoyo;
 
 namespace sires {
-  hai::cstr real_path_name(jute::view name);
+  export hai::cstr real_path_name(jute::view name);
 
+  export auto jojo_cstr(jute::view name) {
+    auto rp = real_path_name(name);
+    silog::log(silog::info, "Trying to read resource [%s]", rp.begin());
+    return ::jojo::read_cstr(rp);
+  }
   export void jojo(jute::view name, void * ptr, auto fn) {
     auto rp = real_path_name(name);
     silog::log(silog::info, "Trying to read resource [%s]", rp.begin());
