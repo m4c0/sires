@@ -2,11 +2,12 @@
 #pragma leco add_resource "poc.txt"
 
 import jute;
+import hai;
 import silog;
 import sires;
 
 int main() {
-  sires::jojo("poc.txt", nullptr, [](void *, auto & data) {
+  sires::jojo("poc.txt", nullptr, [](void *, hai::cstr & data) {
     silog::log(silog::debug, "Got %d bytes [%.*s]", data.size(), data.size(), data.begin());
   });
 
