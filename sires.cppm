@@ -13,14 +13,10 @@ namespace sires {
   export hai::cstr real_path_name(jute::view name);
 
   export auto jojo_cstr(jute::view name) {
-    auto rp = real_path_name(name);
-    silog::log(silog::info, "Trying to read resource [%s]", rp.begin());
-    return ::jojo::read_cstr(rp);
+    return ::jojo::read_cstr(real_path_name(name));
   }
   export void jojo(jute::view name, void * ptr, auto fn) {
-    auto rp = real_path_name(name);
-    silog::log(silog::info, "Trying to read resource [%s]", rp.begin());
-    ::jojo::read(rp, ptr, fn);
+    ::jojo::read(real_path_name(name), ptr, fn);
   }
 
   export mno::req<yoyo::file_reader> open(jute::view name) noexcept {
