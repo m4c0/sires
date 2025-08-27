@@ -12,9 +12,11 @@ import yoyo;
 namespace sires {
   export hai::cstr real_path_name(jute::view name);
 
+#ifndef LECO_TARGET_WASM
   export auto jojo_cstr(jute::view name) {
     return ::jojo::read_cstr(real_path_name(name));
   }
+#endif
   export void jojo(jute::view name, void * ptr, auto fn) {
     ::jojo::read(real_path_name(name), ptr, fn);
   }
