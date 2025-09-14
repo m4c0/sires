@@ -18,9 +18,8 @@ namespace {
   using cfptr = hai::holder<traits::remove_ptr_t<T>, cfdel>;
 }
 
-static hai::cstr err(const char * msg) {
-  // TODO: communicate this via on_error
-  NSLog(CFSTR("Error: %s"), msg);
+static hai::cstr err(jute::view msg) {
+  sires::error(nullptr, msg);
   return {};
 }
 

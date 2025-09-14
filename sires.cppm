@@ -7,7 +7,8 @@ import jute;
 namespace sires {
   export hai::cstr real_path_name(jute::view name);
 
-  export constexpr const auto on_error = jojo::on_error;
+  // Should be defined once per app
+  export void on_error(hai::fn<void, void *, jute::view> callback);
 
   export void read(jute::view name, void * ptr, auto fn) {
     jojo::read(real_path_name(name), ptr, fn);
@@ -18,6 +19,8 @@ namespace sires {
     return jojo::read_cstr(real_path_name(name));
   }
 #endif
+
+  void error(void * ptr, jute::view msg);
 }
 
 #if LECO_TARGET_ANDROID
@@ -33,3 +36,15 @@ namespace sires {
 #elif LECO_TARGET_LINUX
 #pragma leco add_impl linux
 #endif
+
+module :private;
+
+static hai::fn<void, void *, jute::view> g_on_error {};
+
+void sires::on_error(hai::fn<void, void *, jute::view> callback) {
+  g_on_error = callback;
+  jojo::on_error(callback);
+}
+void sires::error(void * ptr, jute::view msg) {
+  g_on_error(ptr, msg);
+}
