@@ -7,6 +7,8 @@ import jute;
 namespace sires {
   export hai::cstr real_path_name(jute::view name);
 
+  export constexpr const auto on_error = jojo::on_error;
+
   export void read(jute::view name, void * ptr, auto fn) {
     jojo::read(real_path_name(name), ptr, fn);
   }
