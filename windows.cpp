@@ -28,7 +28,6 @@ hai::cstr sires::real_path_name(jute::view name) {
 
   auto p = (dir + "\\"_s + name).cstr();
   DWORD attr = GetFileAttributes(p.data());
-  // TODO: communicate this via on_error
   if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY)) return {};
 
   return traits::move(p);

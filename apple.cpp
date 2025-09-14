@@ -18,11 +18,6 @@ namespace {
   using cfptr = hai::holder<traits::remove_ptr_t<T>, cfdel>;
 }
 
-static hai::cstr err(jute::view msg) {
-  sires::error(nullptr, msg);
-  return {};
-}
-
 hai::cstr sires::real_path_name(jute::view name) {
   cfptr<CFStringRef> nsname { CFStringCreateWithBytesNoCopy(
       nullptr,
@@ -38,10 +33,10 @@ hai::cstr sires::real_path_name(jute::view name) {
   }
 
   cfptr<CFURLRef> url { CFBundleCopyResourceURL(bundle, *nsname, nullptr, nullptr) };
-  if (!*url) return err("Could not find resource file");
+  if (!*url) return {};
 
   cfptr<CFStringRef> path { CFURLCopyFileSystemPath(*url, kCFURLPOSIXPathStyle) };
-  if (!*path) return err("Could not open resource file");
+  if (!*path) return {};
 
   hai::cstr p { static_cast<unsigned>(CFStringGetLength(*path)) };
   CFStringGetCString(*path, p.data(), p.size() + 1, kCFStringEncodingUTF8);

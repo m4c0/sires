@@ -9,9 +9,12 @@ namespace sires {
 
   // Should be defined once per app
   export void on_error(hai::fn<void, void *, jute::view> callback);
+  void error(void * ptr, jute::view msg);
 
   export void read(jute::view name, void * ptr, auto fn) {
-    jojo::read(real_path_name(name), ptr, fn);
+    auto real = real_path_name(name);
+    if (real.size() == 0) error(ptr, (name + ": could not find resource").cstr());
+    else jojo::read(real, ptr, fn);
   }
 
 #ifndef LECO_TARGET_WASM
@@ -19,8 +22,6 @@ namespace sires {
     return jojo::read_cstr(real_path_name(name));
   }
 #endif
-
-  void error(void * ptr, jute::view msg);
 }
 
 #if LECO_TARGET_ANDROID
