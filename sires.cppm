@@ -1,49 +1,14 @@
 module;
 export module sires;
 import hai;
-import missingno;
-import mtime;
 import jojo;
 import jute;
-import silog;
-import traits;
-import yoyo;
 
 namespace sires {
   export hai::cstr real_path_name(jute::view name);
 
-#ifndef LECO_TARGET_WASM
-  export auto jojo_cstr(jute::view name) {
-    return ::jojo::read_cstr(real_path_name(name));
-  }
-#endif
-  export void jojo(jute::view name, void * ptr, auto fn) {
+  export void read(jute::view name, void * ptr, auto fn) {
     ::jojo::read(real_path_name(name), ptr, fn);
-  }
-
-  export mno::req<yoyo::file_reader> open(jute::view name) noexcept {
-    auto rp = real_path_name(name);
-    if (rp.size() == 0) return mno::req<yoyo::file_reader>::failed("Could not find resource");
-    return yoyo::file_reader::open(real_path_name(name).data());
-  }
-
-  export mno::req<hai::array<char>> slurp(jute::view name) {
-    return sires::open(name).fmap([](auto & rdr) {
-      return rdr.size().fmap([&](unsigned sz) {
-        hai::array<char> buf { sz };
-        return rdr.read(buf.begin(), sz).map([&] {
-          return traits::move(buf);
-        });
-      });
-    });
-  }
-
-  using uint64_t = traits::ints::uint64_t;
-  export mno::req<uint64_t> stat(jute::view name) noexcept {
-    auto rp = real_path_name(name);
-    if (rp.size() == 0) return mno::req<uint64_t>::failed("Could not find resource");
-    uint64_t t = mtime::of(rp.data());
-    return t > 0 ? mno::req{ t } : mno::req<uint64_t>::failed("Could not check mod time of resource");
   }
 }
 
