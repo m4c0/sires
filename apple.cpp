@@ -19,6 +19,7 @@ namespace {
 }
 
 static hai::cstr err(const char * msg) {
+  // TODO: communicate this via on_error
   NSLog(CFSTR("Error: %s"), msg);
   return {};
 }
