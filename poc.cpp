@@ -17,4 +17,8 @@ int main() {
     silog::log(silog::error, "Unreachable");
     throw 0;
   });
+
+#ifndef LECO_TARGET_WASM
+  silog::log(silog::debug, "Reading again: %s", sires::slurp("poc.txt").begin());
+#endif
 }

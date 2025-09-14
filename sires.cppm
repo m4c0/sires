@@ -8,8 +8,14 @@ namespace sires {
   export hai::cstr real_path_name(jute::view name);
 
   export void read(jute::view name, void * ptr, auto fn) {
-    ::jojo::read(real_path_name(name), ptr, fn);
+    jojo::read(real_path_name(name), ptr, fn);
   }
+
+#ifndef LECO_TARGET_WASM
+  export auto slurp(jute::view name) {
+    return jojo::read_cstr(real_path_name(name));
+  }
+#endif
 }
 
 #if LECO_TARGET_ANDROID
