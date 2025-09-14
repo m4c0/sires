@@ -1,4 +1,4 @@
-#pragma leco tool
+#pragma leco test
 
 import jute;
 import hai;
