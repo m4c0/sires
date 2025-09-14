@@ -32,6 +32,11 @@ hai::cstr sires::real_path_name(jute::view name) {
       false,
       kCFAllocatorNull) };
   auto bundle = CFBundleGetMainBundle();
+  if (!CFBundleGetIdentifier(bundle)) {
+    // Non-bundled app. Let's accept local files
+    return name.cstr();
+  }
+
   cfptr<CFURLRef> url { CFBundleCopyResourceURL(bundle, *nsname, nullptr, nullptr) };
   if (!*url) return err("Could not find resource file");
 
