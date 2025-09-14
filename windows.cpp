@@ -1,13 +1,18 @@
 module;
 #define WIN32_LEAN_AND_MEAN
-#include <sys/stat.h>
 #include <windows.h>
 
 module sires;
 import traits;
-import yoyo;
 
 hai::cstr sires::real_path_name(jute::view name) {
+  char buf[128];
+  // If running as a terminal app
+  // TODO: validate this on a real Windows machine
+  if (GetEnvironmentVariable("TERM", buf, sizeof(buf)) > 0) {
+    return name.cstr();
+  }
+
   using namespace jute::literals;
 
   // Assume current path as default if GetModuleFileName fails
