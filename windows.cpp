@@ -1,18 +1,19 @@
+#pragma leco add_library user32
 module;
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 module sires;
 import traits;
-import print;
 
 hai::cstr sires::real_path_name(jute::view name) {
-  char buf[128];
-  // If running as a terminal app
-  // TODO: validate this on a real Windows machine
-  if (GetEnvironmentVariable("WT_SESSION", buf, sizeof(buf)) > 0) {
-    return name.cstr();
-  }
+  bool has_hwnd = false;
+  EnumWindows([](HWND hwnd, LPARAM lparam) {
+    if (GetCurrentProcessId() != GetWindowThreadProcessId(hwnd, NULL)) return TRUE;
+    *(bool *)lparam = true;
+    return FALSE;
+  }, (LPARAM)&has_hwnd);
+  if (!has_hwnd) return name.cstr();
 
   using namespace jute::literals;
 
