@@ -7,6 +7,8 @@ module sires;
 import traits;
 
 hai::cstr sires::real_path_name(jute::view name) {
+  // Check if current app has a HWND. If it does not have a window, it most
+  // likely means a terminal app - so we are safer to read from current dir
   bool has_hwnd = false;
   EnumWindows([](HWND hwnd, LPARAM lparam) {
     if (GetCurrentProcessId() != GetWindowThreadProcessId(hwnd, NULL)) return TRUE;
