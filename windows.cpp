@@ -1,4 +1,3 @@
-#pragma leco add_library user32
 module;
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -7,15 +6,12 @@ module sires;
 import traits;
 
 hai::cstr sires::real_path_name(jute::view name) {
-  // Check if current app has a HWND. If it does not have a window, it most
-  // likely means a terminal app - so we are safer to read from current dir
-  bool has_hwnd = false;
-  EnumWindows([](HWND hwnd, LPARAM lparam) {
-    if (GetCurrentProcessId() != GetWindowThreadProcessId(hwnd, NULL)) return TRUE;
-    *(bool *)lparam = true;
-    return FALSE;
-  }, (LPARAM)&has_hwnd);
-  if (!has_hwnd) return name.cstr();
+  // If we are running from an executable created via /subsystem:console, then
+  // all "resource" files should be considered to be relative to the current
+  // directory.
+  //
+  // See remarks of https://learn.microsoft.com/en-us/windows/console/getstdhandle
+  if (GetStdHandle(STD_OUTPUT_HANDLE)) return name.cstr();
 
   using namespace jute::literals;
 
