@@ -4,12 +4,13 @@ module;
 
 module sires;
 import traits;
+import print;
 
 hai::cstr sires::real_path_name(jute::view name) {
   char buf[128];
   // If running as a terminal app
   // TODO: validate this on a real Windows machine
-  if (GetEnvironmentVariable("TERM", buf, sizeof(buf)) > 0) {
+  if (GetEnvironmentVariable("WT_SESSION", buf, sizeof(buf)) > 0) {
     return name.cstr();
   }
 
@@ -30,5 +31,5 @@ hai::cstr sires::real_path_name(jute::view name) {
   DWORD attr = GetFileAttributes(p.data());
   if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY)) return {};
 
-  return traits::move(p);
+  return p;
 }
