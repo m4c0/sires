@@ -6,7 +6,6 @@ extern "C" void NSLog(CFStringRef format, ...);
 
 module sires;
 import traits;
-import yoyo;
 
 namespace {
   struct cfdel {
