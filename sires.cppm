@@ -26,7 +26,7 @@ namespace sires {
 
 #if LECO_TARGET_ANDROID
 #pragma leco add_impl android
-#pragma leco add_system_library android
+//#pragma leco add_system_library android
 #elif LECO_TARGET_APPLE
 #pragma leco add_impl apple
 #pragma leco add_framework CoreFoundation
