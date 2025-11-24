@@ -3,6 +3,7 @@
 
 import jute;
 import hai;
+import jojo;
 import silog;
 import sires;
 
@@ -10,7 +11,7 @@ int main() {
   silog::log(silog::debug, "File at: %s", sires::real_path_name("poc.txt").begin());
 
   static auto id = 0;
-  sires::on_error([](void * ptr, jute::view msg) {
+  jojo::on_error([](void * ptr, jute::view msg) {
     if (&id != ptr) silog::log(silog::error, "Got error: %s", msg.cstr().begin());
   });
 

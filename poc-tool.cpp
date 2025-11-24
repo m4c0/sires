@@ -2,6 +2,7 @@
 
 import jute;
 import hai;
+import jojo;
 import print;
 import sires;
 
@@ -9,8 +10,8 @@ int main() {
   putan("File at:", sires::real_path_name("poc.txt"));
 
   static auto id = 0;
-  sires::on_error([](void * ptr, jute::view msg) {
-    if (&id != ptr) dief("Got error: %s", msg.cstr().begin());
+  jojo::on_error([](void * ptr, jute::view msg) {
+    if (&id != ptr) die("Got error: ", msg);
     putan("Got expected error:", msg);
   });
 
