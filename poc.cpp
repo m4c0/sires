@@ -9,6 +9,7 @@ import sires;
 
 int main() {
   silog::log(silog::debug, "File at: %s", sires::real_path_name("poc.txt").begin());
+  silog::log(silog::debug, "File at: %s", sires::real_path_name("poc.cpp").begin());
 
   static auto id = 0;
   jojo::on_error([](void * ptr, jute::view msg) {

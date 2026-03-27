@@ -27,6 +27,8 @@ hai::cstr sires::real_path_name(jute::view name) {
     // current directory.
     //
     // See remarks of https://learn.microsoft.com/en-us/windows/console/getstdhandle
+    //
+    // TODO: add a way to detect this using LECO's app/tool - it should be safer for final users this way
     if (GetStdHandle(STD_OUTPUT_HANDLE)) return name.cstr();
     return {};
   }
