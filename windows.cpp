@@ -6,13 +6,6 @@ module sires;
 import traits;
 
 hai::cstr sires::real_path_name(jute::view name) {
-  // If we are running from an executable created via /subsystem:console, then
-  // all "resource" files should be considered to be relative to the current
-  // directory.
-  //
-  // See remarks of https://learn.microsoft.com/en-us/windows/console/getstdhandle
-  if (GetStdHandle(STD_OUTPUT_HANDLE)) return name.cstr();
-
   using namespace jute::literals;
 
   // Assume current path as default if GetModuleFileName fails
@@ -28,7 +21,16 @@ hai::cstr sires::real_path_name(jute::view name) {
 
   auto p = (dir + "\\"_s + name).cstr();
   DWORD attr = GetFileAttributes(p.data());
-  if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY)) return {};
+  if (attr == INVALID_FILE_ATTRIBUTES) {
+    // If we are running from an executable created via /subsystem:console,
+    // then missing "resource" files should be considered to be relative to the
+    // current directory.
+    //
+    // See remarks of https://learn.microsoft.com/en-us/windows/console/getstdhandle
+    if (GetStdHandle(STD_OUTPUT_HANDLE)) return name.cstr();
+    return {};
+  }
+  if (attr & FILE_ATTRIBUTE_DIRECTORY) return {};
 
   return p;
 }
